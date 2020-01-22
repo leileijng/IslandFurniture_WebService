@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="http://localhost:8080/SalesRecordingWebService/SalesRecordingWebService?WSDL" uri="src/conf/xml-resources/web-service-references/SalesRecordingWebService/wsdl/localhost_8080/SalesRecordingWebService/SalesRecordingWebService.wsdl"/>
+    <system systemId="http://localhost:8080/SalesRecordingWebService/SalesRecordingWebService?xsd=1" uri="src/conf/xml-resources/web-service-references/SalesRecordingWebService/wsdl/localhost_8080/SalesRecordingWebService/SalesRecordingWebService.xsd_1.xsd"/>
+</catalog>

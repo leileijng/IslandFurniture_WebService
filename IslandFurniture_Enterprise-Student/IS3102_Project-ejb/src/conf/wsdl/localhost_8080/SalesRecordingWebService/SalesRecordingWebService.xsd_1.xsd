@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is Metro/2.3 (tags/2.3-7528; 2013-04-29T19:34:10+0000) JAXWS-RI/2.2.8 JAXWS/2.2 svn-revision#unknown. --><xs:schema xmlns:tns="http://SalesRecording.OperationalCRM/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://SalesRecording.OperationalCRM/">
+
+<xs:element name="createSalesRecord" type="tns:createSalesRecord"/>
+
+<xs:element name="createSalesRecordResponse" type="tns:createSalesRecordResponse"/>
+
+<xs:complexType name="createSalesRecord">
+<xs:sequence>
+<xs:element name="staffEmail" type="xs:string" minOccurs="0"/>
+<xs:element name="password" type="xs:string" minOccurs="0"/>
+<xs:element name="storeID" type="xs:long" minOccurs="0"/>
+<xs:element name="posName" type="xs:string" minOccurs="0"/>
+<xs:element name="itemsPurchasedSKU" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="itemsPurchasedQty" type="xs:int" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="amountDue" type="xs:double" minOccurs="0"/>
+<xs:element name="amountPaid" type="xs:double" minOccurs="0"/>
+<xs:element name="amountPaidUsingPoints" type="xs:double" minOccurs="0"/>
+<xs:element name="loyaltyPointsDeducted" type="xs:int" minOccurs="0"/>
+<xs:element name="memberEmail" type="xs:string" minOccurs="0"/>
+<xs:element name="receiptNo" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createSalesRecordResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>
