@@ -7,7 +7,8 @@
 <%@page import="EntityManager.RetailProductEntity"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <jsp:include page="checkCountry.jsp" />
-<!--###-->
+
+
 <html> <!--<![endif]-->
     <jsp:include page="header.html" />
     <body>
@@ -16,9 +17,11 @@
         %>
         <script>
             var totalPrice = 0;
+           
             for (var i = 0, n = shoppingCart.getItems().size; i < n; i++) {
-                totalPrice += shoppingCart.getItems().get(i).get
+                totalPrice += shoppingCart.getItems().get(i).get();
             }
+            
             function removeItem() {
                 checkboxes = document.getElementsByName('delete');
                 var numOfTicks = 0;
@@ -124,44 +127,49 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <%ArrayList<ShoppingCartLineItem> shoppingCart = (ArrayList<ShoppingCartLineItem>) (session.getAttribute("shoppingCart"));
+                                                        <%
+                                                           
+                                                            ArrayList<ShoppingCartLineItem> myCart = (ArrayList<ShoppingCartLineItem>) (session.getAttribute("myCart"));
                                                             try {
-                                                                if (shoppingCart != null && shoppingCart.size() > 0) {
-                                                                    //for (ShoppingCartLineItem item : shoppingCart) {
+                                                                
+                                                                if (myCart != null && myCart.size() > 0) {
+                                                                    for (ShoppingCartLineItem item : myCart) {
+                                                                        finalPrice += item.getPrice()*item.getQuantity();
                                                         %>
                                                         <tr class="cart_table_item">
                                                             <td class="product-remove">
-                                                                <input type="checkbox" name="delete" value="" />
+                                                                <input type="checkbox" name="delete" value="<%=item.getSKU()%>" />
                                                             </td>
                                                             <td class="product-thumbnail">
                                                                 <a href="furnitureProductDetails.jsp">
-                                                                    <img width="100" height="100" alt="" class="img-responsive" src="../../..<%=ImageURL()%>">
+                                                                    <img width="100" height="100" alt="" class="img-responsive" src="../../..<%=item.getImageURL()%>">
                                                                 </a>
                                                             </td>
                                                             <td class="product-name">
-                                                                <a class="productDetails" href="furnitureProductDetails.jsp">Insert product name</a>
+                                                                <a class="productDetails" href="furnitureProductDetails.jsp"><%=item.getName()%></a>
                                                             </td>
                                                             <td class="product-price">
-                                                                $<span class="amount" id="price<%=SKU()%>">
-                                                                    insert price here
+                                                                $<span class="amount" id="price<%=item.getSKU()%>">
+                                                                    <%=item.getPrice()%>
                                                                 </span>
                                                             </td>
                                                             <td class="product-quantity">
                                                                 <form enctype="multipart/form-data" method="post" class="cart">
                                                                     <div class="quantity">
-                                                                        <input type="button" class="minus" value="-" onclick="minus('<%=SKU()%>')">
-                                                                        <input type="text" disabled="true" class="input-text qty text" title="Qty" value="" name="quantity" min="1" step="1" id="<%=SKU()%>">
-                                                                        <input type="button" class="plus" value="+" onclick="plus('<%=SKU()%>', '<%=Name()%>',<%=Price()%>, '<%=ImageURL()%>')">
+                                                                        <input type="button" class="minus" value="-" onclick="minus('<%=item.getSKU()%>')">
+                                                                        <input type="text" disabled="true" class="input-text qty text" title="Qty" value="<%=item.getQuantity()%>" name="quantity" min="1" step="1" id="<%=item.getSKU()%>">
+                                                                        <input type="button" class="plus" value="+" onclick="plus('<%=item.getSKU()%>', '<%=item.getName()%>',<%=item.getPrice()%>, '<%=item.getImageURL()%>')">
                                                                     </div>
                                                                 </form>
                                                             </td>
                                                             <td class="product-subtotal">
-                                                                $<span class="amount" id="totalPrice<%=SKU()%>">
-                                                                    insert total price here
+                                                                $<span class="amount" id="totalPrice<%=item.getSKU()%>">
+                                                                    <%=item.getQuantity()*item.getPrice()%>
+                                                         
                                                                 </span>
                                                             </td>
                                                         </tr>
-                                                        <%                                                                 //   }
+                                                        <%       }                                                          //   }
                                                                 }
                                                             } catch (Exception ex) {
                                                                 System.out.println(ex);
@@ -173,20 +181,19 @@
                                                             <td></td>
                                                             <td></td>
                                                             <td class="product-subtotal" style="font-weight: bold">
-                                                                Total: 
+                                                             
                                                             </td>
                                                             <td class="product-subtotal">
                                                                 $<span class="amount" id="finalPrice" name="finalPrice">
-                                                                    
+                                                                       Total: <%=finalPrice%>
                                                                 </span>
                                                             </td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
-                                                <%if (shoppingCart != null && shoppingCart.size() > 0) {%>
+                                                <%if(myCart != null && myCart.size() > 0){%>
                                                 <div align="left"><a href="#myModal" data-toggle="modal"><button id="btnRemove" class="btn btn-primary">Remove Item(s)</button></a></div>
                                                 <div align="right"><a href="#checkoutModal" data-toggle="modal"><button id="btnCheckout" class="btn btn-primary btn-lg">Check Out</button></a></div>
-
                                                 <%} else {%>
                                                 <div align="right"><a href="#checkoutModal" data-toggle="modal"><button disabled="true" id="btnCheckout" class="btn btn-primary btn-lg">Check Out</button></a></div>
                                                 <%}%>
@@ -283,7 +290,7 @@
                     </div>
                 </div>
             </div>
-            <div role="dialog" class="modal fade" id="checkoutModal">
+             <div role="dialog" class="modal fade" id="checkoutModal">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -293,8 +300,8 @@
                             <p id="messageBox">Please check the cart items before checkout. Are you sure you want to continue?</p>
                         </div>
                         <div class="modal-footer">                        
-                            <input class="btn btn-primary" data-dismiss ="modal" name="btnCheckout" type="button" value="Confirm" onclick="checkOut()"  />
-                            <a class="btn btn-default" data-dismiss ="modal">Close</a>
+                            <input class="btn btn-primary" data-dismiss="modal" name="btnCheckout" type="button" value="Confirm" onclick="checkOut()">
+                            <a class="btn btn-default" data-dismiss="modal">Close</a>
                         </div>
                     </div>
                 </div>
