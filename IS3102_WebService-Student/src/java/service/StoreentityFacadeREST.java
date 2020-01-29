@@ -85,6 +85,7 @@ public class StoreentityFacadeREST extends AbstractFacade<Storeentity> {
     @Produces({"application/json"})
     public Response getItemQuantityOfStore(@QueryParam("storeID") Long storeID, @QueryParam("SKU") String SKU) {
         try {
+            System.out.println("WS called");
             Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/islandfurniture-it07?zeroDateTimeBehavior=convertToNull&user=root&password=12345");
             String stmt = "SELECT sum(l.QUANTITY) as sum FROM storeentity s, warehouseentity w, storagebinentity sb, storagebinentity_lineitementity sbli, lineitementity l, itementity i where s.WAREHOUSE_ID=w.ID and w.ID=sb.WAREHOUSE_ID and sb.ID=sbli.StorageBinEntity_ID and sbli.lineItems_ID=l.ID and l.ITEM_ID=i.ID and s.ID=? and i.SKU=?";
             PreparedStatement ps = conn.prepareStatement(stmt);
@@ -95,7 +96,7 @@ public class StoreentityFacadeREST extends AbstractFacade<Storeentity> {
             if (rs.next()) {
                 qty = rs.getInt("sum");
             }
-
+            System.out.println(qty);
             return Response.ok(qty + "", MediaType.APPLICATION_JSON).build();
         } catch (Exception ex) {
             ex.printStackTrace();
