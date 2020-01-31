@@ -82,7 +82,7 @@ public class ECommerce_AddFurnitureToListServlet extends HttpServlet {
             }
             else{
                 String result = "Item not added to cart, not enough quantity available.";
-                response.sendRedirect("/IS3102_Project-war/B/SG/shoppingCart.jsp?goodMsg=" + result);
+                response.sendRedirect("/IS3102_Project-war/B/SG/shoppingCart.jsp?errMsg=" + result);
             }
             
         } catch (Exception ex) {
