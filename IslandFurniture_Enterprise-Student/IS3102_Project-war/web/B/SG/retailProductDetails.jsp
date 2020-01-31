@@ -103,6 +103,7 @@
                                                 <input type="submit" class="btn btn-primary btn-icon" value="Check Item Availability"/>
                                                 <input type="hidden" name="sku" value="<%=sku%>"/>
                                                 <input type="hidden" name="type" value="Retail Product"/>
+                                                <input type="hidden" name="category" value="<%=category%>"/>
                                             </form>
                                         </div>
                                         <%
