@@ -4,26 +4,26 @@
     <service name="LoyaltyAndRewardsWebService">
       <implementation-class>OperationalCRM.LoyaltyAndRewards.LoyaltyAndRewardsWebService</implementation-class>
     </service>
+    <service name="SalesReportingWebService">
+      <implementation-class>StoreTransaction.SalesReporting.SalesReportingWebService</implementation-class>
+    </service>
+    <service name="AccountManagementWebService">
+      <implementation-class>CommonInfrastructure.AccountManagement.AccountManagementWebService</implementation-class>
+    </service>
+    <service name="PromotionalSalesWebService">
+      <implementation-class>OperationalCRM.PromotionalSales.PromotionalSalesWebService</implementation-class>
+    </service>
+    <service name="CustomerServiceWebService">
+      <implementation-class>OperationalCRM.CustomerService.CustomerServiceWebService</implementation-class>
+    </service>
+    <service name="RetailProductsAndRawMaterialsPurchasingWebService">
+      <implementation-class>SCM.RetailProductsAndRawMaterialsPurchasing.RetailProductsAndRawMaterialsPurchasingWebService</implementation-class>
+    </service>
     <service name="RetailInventoryWebService">
       <implementation-class>StoreTransaction.RetailInventory.RetailInventoryWebService</implementation-class>
     </service>
     <service name="SalesRecordingWebService">
       <implementation-class>OperationalCRM.SalesRecording.SalesRecordingWebService</implementation-class>
-    </service>
-    <service name="SalesReportingWebService">
-      <implementation-class>StoreTransaction.SalesReporting.SalesReportingWebService</implementation-class>
-    </service>
-    <service name="CustomerServiceWebService">
-      <implementation-class>OperationalCRM.CustomerService.CustomerServiceWebService</implementation-class>
-    </service>
-    <service name="PromotionalSalesWebService">
-      <implementation-class>OperationalCRM.PromotionalSales.PromotionalSalesWebService</implementation-class>
-    </service>
-    <service name="AccountManagementWebService">
-      <implementation-class>CommonInfrastructure.AccountManagement.AccountManagementWebService</implementation-class>
-    </service>
-    <service name="RetailProductsAndRawMaterialsPurchasingWebService">
-      <implementation-class>SCM.RetailProductsAndRawMaterialsPurchasing.RetailProductsAndRawMaterialsPurchasingWebService</implementation-class>
     </service>
   </services>
   <clients>
