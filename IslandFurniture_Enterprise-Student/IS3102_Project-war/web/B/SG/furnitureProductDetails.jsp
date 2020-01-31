@@ -33,10 +33,10 @@
             List<StoreEntity> storesInCountry = (List<StoreEntity>) session.getAttribute("storesInCountry");
             List<Furniture> furnitures = (List<Furniture>) (session.getAttribute("furnitures"));
             
-            /define your variables here/
+            //define your variables here/
             Furniture furniture;
             
-            /set your variables here/
+            //set your variables here
             furniture = new Furniture();
             for(int i=0;i<furnitures.size();i++){
                 if(furnitures.get(i).getSKU().equals(sku)){
