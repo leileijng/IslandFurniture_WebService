@@ -33,10 +33,10 @@
             List<StoreEntity> storesInCountry = (List<StoreEntity>) session.getAttribute("storesInCountry");
             List<Furniture> furnitures = (List<Furniture>) (session.getAttribute("furnitures"));
             
-            /*define your variables here*/
+            /define your variables here/
             Furniture furniture;
             
-            /*set your variables here*/
+            /set your variables here/
             furniture = new Furniture();
             for(int i=0;i<furnitures.size();i++){
                 if(furnitures.get(i).getSKU().equals(sku)){
@@ -124,6 +124,7 @@
                                                 </select><br/><br/>
                                                 <input type="submit" class="btn btn-primary btn-icon" value="Check Item Availability"/>
                                                 <input type="hidden" name="sku" value="<%=sku%>"/>
+                                                <input type="hidden" name="category" value="<%=category%>"/>
                                                 <input type="hidden" name="type" value="Furniture"/>
                                             </form>
                                         </div>

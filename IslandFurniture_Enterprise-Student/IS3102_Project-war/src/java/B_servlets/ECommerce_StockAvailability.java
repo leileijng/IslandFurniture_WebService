@@ -3,6 +3,7 @@ package B_servlets;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,6 +14,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+@WebServlet(name = "ECommerce_StockAvailability", urlPatterns = {"/ECommerce_StockAvailability"})
 public class ECommerce_StockAvailability extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -24,6 +26,8 @@ public class ECommerce_StockAvailability extends HttpServlet {
             String SKU = request.getParameter("sku");
             String type = request.getParameter("type");
 
+            //Add im category
+            String category = request.getParameter("category");
             //<editor-fold defaultstate="collapsed" desc="check storeID and SKU validity">
             if ((storeIDstring == null || storeIDstring.equals("")) && (SKU == null || SKU.equals(""))) {
                 response.sendRedirect("/IS3102_Project-war/B/SG/index.jsp");
@@ -40,9 +44,9 @@ public class ECommerce_StockAvailability extends HttpServlet {
             int itemQty = getQuantity(storeID, SKU);
 
             if (type.equals("Furniture")) {
-                response.sendRedirect("/IS3102_Project-war/B/SG/furnitureProductDetails.jsp?sku=" + SKU + "&itemQty=" + itemQty + "&storeID=" + storeID);
+                response.sendRedirect("/IS3102_Project-war/B/SG/furnitureProductDetails.jsp?sku=" + SKU + "&itemQty=" + itemQty + "&storeID=" + storeID + "&category=" + category);
             } else if (type.equals("Retail Product")) {
-                response.sendRedirect("/IS3102_Project-war/B/SG/retailProductDetails.jsp?sku=" + SKU + "&itemQty=" + itemQty + "&storeID=" + storeID);
+                response.sendRedirect("/IS3102_Project-war/B/SG/retailProductDetails.jsp?sku=" + SKU + "&itemQty=" + itemQty + "&storeID=" + storeID + "&category=" + category);
             }
 
         } catch (Exception ex) {
