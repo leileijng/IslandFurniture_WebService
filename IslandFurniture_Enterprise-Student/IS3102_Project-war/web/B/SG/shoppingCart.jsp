@@ -17,11 +17,11 @@
         %>
         <script>
             var totalPrice = 0;
-           
+
             for (var i = 0, n = shoppingCart.getItems().size; i < n; i++) {
                 totalPrice += shoppingCart.getItems().get(i).get();
             }
-            
+
             function removeItem() {
                 checkboxes = document.getElementsByName('delete');
                 var numOfTicks = 0;
@@ -72,12 +72,26 @@
                 $("#makePaymentForm").show("slow", function () {
                 });
             }
-            
+
             function makePayment() {
                 window.event.returnValue = true;
-                card = $('#txtCardNo').val();
-                document.makePaymentForm.action = "../../ECommerce_PaymentServlet?cardno=" + card;
-                document.makePaymentForm.submit();
+                cardName = $('#txtName').val();
+                cardNo = $('#txtCardNo').val();
+                securityCode = $('#txtSecuritycode').val();
+                year = $('#year').val();
+                if (cardName.trim() == "") {
+                    alert("Please fill in the Name on the card!");
+                } else if (cardNo.trim() == "") {
+                    alert("Please fill in the card number!");
+                } else if (securityCode.trim() == "") {
+                    alert("Please fill in the securityCode!");
+                } else if (year.trim() == "") {
+                    alert("Please fill in the expire year of the card!");
+                }
+                else {
+                    document.makePaymentForm.action = "../../ECommerce_PaymentServlet?cardno=" + cardNo;
+                    document.makePaymentForm.submit();
+                }
             }
         </script>
 
@@ -130,13 +144,12 @@
                                                     </thead>
                                                     <tbody>
                                                         <%
-                                                           
                                                             ArrayList<ShoppingCartLineItem> myCart = (ArrayList<ShoppingCartLineItem>) (session.getAttribute("myCart"));
                                                             try {
-                                                                
+
                                                                 if (myCart != null && myCart.size() > 0) {
                                                                     for (ShoppingCartLineItem item : myCart) {
-                                                                        finalPrice += item.getPrice()*item.getQuantity();
+                                                                        finalPrice += item.getPrice() * item.getQuantity();
                                                         %>
                                                         <tr class="cart_table_item">
                                                             <td class="product-remove">
@@ -166,8 +179,8 @@
                                                             </td>
                                                             <td class="product-subtotal">
                                                                 $<span class="amount" id="totalPrice<%=item.getSKU()%>">
-                                                                    <%=item.getQuantity()*item.getPrice()%>
-                                                         
+                                                                    <%=item.getQuantity() * item.getPrice()%>
+
                                                                 </span>
                                                             </td>
                                                         </tr>
@@ -183,17 +196,17 @@
                                                             <td></td>
                                                             <td></td>
                                                             <td class="product-subtotal" style="font-weight: bold">
-                                                             
+
                                                             </td>
                                                             <td class="product-subtotal">
                                                                 $<span class="amount" id="finalPrice" name="finalPrice">
-                                                                       Total: <%=finalPrice%>
+                                                                    Total: <%=finalPrice%>
                                                                 </span>
                                                             </td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
-                                                <%if(myCart != null && myCart.size() > 0){%>
+                                                <%if (myCart != null && myCart.size() > 0) {%>
                                                 <div align="left"><a href="#myModal" data-toggle="modal"><button id="btnRemove" class="btn btn-primary">Remove Item(s)</button></a></div>
                                                 <div align="right"><a href="#checkoutModal" data-toggle="modal"><button id="btnCheckout" class="btn btn-primary btn-lg">Check Out</button></a></div>
                                                 <%} else {%>
@@ -292,7 +305,7 @@
                     </div>
                 </div>
             </div>
-             <div role="dialog" class="modal fade" id="checkoutModal">
+            <div role="dialog" class="modal fade" id="checkoutModal">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
