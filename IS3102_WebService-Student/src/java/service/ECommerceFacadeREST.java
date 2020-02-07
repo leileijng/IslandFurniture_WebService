@@ -100,17 +100,18 @@ public class ECommerceFacadeREST {
         }
     }
 
-    
-    
     @POST
     @Path("createEcommerceLineItemRecord")
     @Consumes({"application/json"})
     public Response createEcommerceLineItemRecord(@QueryParam("itemEntityID") int itemID,
             @QueryParam("quantity") int quantity) {
-        
+
         int newlineItemId;
         try {
             Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/islandfurniture-it07?user=root&password=12345");
+
+            //insert new record to lineitem table
+            //new outbound record
             String insertIntoLineItem = "insert into lineitementity(QUANTITY,ITEM_ID) values(?,?);";
             PreparedStatement ps = conn.prepareStatement(insertIntoLineItem, Statement.RETURN_GENERATED_KEYS);
             ps.setInt(1, quantity);
@@ -126,22 +127,85 @@ public class ECommerceFacadeREST {
                 conn.close();
                 return Response.status(404).build();
             }
-            
-            
+
+            //insert new record to storagebinlineitem database
+            //link the lineitem info to storage bin (outbond)
             String insertStorageBinLineItem = "insert into storagebinentity_lineitementity values(21,?);";
             ps = conn.prepareStatement(insertStorageBinLineItem);
             ps.setInt(1, newlineItemId);
             int rs2 = ps.executeUpdate();
-            
+
             if (rs2 > 0) {
                 System.out.println("Insert into storagebinentity_lineitementity successfully");
             } else {
                 conn.close();
                 return Response.status(404).build();
             }
-            
-            
-            
+
+            //update lineitem quantity (deduct the quantity)
+            //first get the id of lineitem, that need to be updated
+            List<Integer> lineItemsTobeUpdateIDs = new ArrayList<Integer>();
+            int stock = 0;
+            int lastrecordQuantityToDeduct = quantity;
+            String getLineItemId = "SELECT l.* FROM "
+                    + "storeentity s, warehouseentity w, storagebinentity sb, storagebinentity_lineitementity sbli, lineitementity l, itementity i "
+                    + "where s.WAREHOUSE_ID=w.ID and w.ID=sb.WAREHOUSE_ID and sb.ID=sbli.StorageBinEntity_ID and sbli.lineItems_ID=l.ID "
+                    + "and l.ITEM_ID=i.ID and s.ID=10001 and i.id=? order by l.quantity desc;";
+
+            ps = conn.prepareStatement(getLineItemId);
+            ps.setInt(1, itemID);
+            ResultSet rsLineItemtoUpdate = ps.executeQuery();
+            while (rsLineItemtoUpdate.next()) {
+                lastrecordQuantityToDeduct = quantity - stock;
+                stock += rsLineItemtoUpdate.getInt("QUANTITY");
+                lineItemsTobeUpdateIDs.add(rsLineItemtoUpdate.getInt("ID"));
+                //the first record can satisfy the deduction request
+                if (quantity <= stock) {
+                    break;
+                }
+            }
+            if (lineItemsTobeUpdateIDs.size() == 1) {
+                String updateLineItem = "Update lineitementity set lineitementity.QUANTITY = QUANTITY - ? where lineitementity.id = ?";
+                ps = conn.prepareStatement(updateLineItem);
+                ps.setInt(1, quantity);
+                ps.setInt(2, lineItemsTobeUpdateIDs.get(0));
+                int rsupdateLineItem = ps.executeUpdate();
+                if (rsupdateLineItem > 0) {
+                    System.out.println("Update lineItem quantity successfully");
+                } else {
+                    conn.close();
+                    return Response.status(404).build();
+                }
+            } else if (lineItemsTobeUpdateIDs.size() > 1) {
+                for (int i = 0; i < lineItemsTobeUpdateIDs.size() - 1; i++) {
+                    String updateLineItem1 = "Update lineitementity set lineitementity.QUANTITY = 0 where lineitementity.id = ?";
+                    ps = conn.prepareStatement(updateLineItem1);
+                    ps.setInt(1, lineItemsTobeUpdateIDs.get(i));
+                    int rsupdateLineItem1 = ps.executeUpdate();
+                    if (rsupdateLineItem1 > 0) {
+                        System.out.println("Update lineItem quantity successfully 1");
+                    } else {
+                        conn.close();
+                        return Response.status(404).build();
+                    }
+                }
+                String updateLineItem2 = "Update lineitementity set lineitementity.QUANTITY = QUANTITY - ? where lineitementity.id = ?";
+                    ps = conn.prepareStatement(updateLineItem2);
+                    ps.setInt(1, lastrecordQuantityToDeduct);
+                    ps.setInt(2, lineItemsTobeUpdateIDs.get(lineItemsTobeUpdateIDs.size() - 1));
+                    int rsupdateLineItem1 = ps.executeUpdate();
+                    if (rsupdateLineItem1 > 0) {
+                        System.out.println("Update lineItem quantity successfully 2");
+                    } else {
+                        conn.close();
+                        return Response.status(404).build();
+                    }
+            } else {
+                conn.close();
+                return Response.status(404).build();
+            }
+
+            //update storagebinentity table, (deduct free volume)
             String upadtestoragebinentity = "Update storagebinentity set storagebinentity.freeVolume = freeVolume - ? where id = 21;";
             ps = conn.prepareStatement(upadtestoragebinentity);
             ps.setInt(1, quantity);
@@ -155,8 +219,7 @@ public class ECommerceFacadeREST {
                 conn.close();
                 return Response.status(404).build();
             }
-            
-            
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }

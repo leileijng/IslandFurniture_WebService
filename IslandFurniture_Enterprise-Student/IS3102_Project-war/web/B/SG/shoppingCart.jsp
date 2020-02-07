@@ -72,13 +72,14 @@
                 $("#makePaymentForm").show("slow", function () {
                 });
             }
-
+            
             function makePayment() {
                 window.event.returnValue = true;
                 cardName = $('#txtName').val();
                 cardNo = $('#txtCardNo').val();
                 securityCode = $('#txtSecuritycode').val();
                 year = $('#year').val();
+                var numbers = /^[0-9]+$/;
                 if (cardName.trim() == "") {
                     alert("Please fill in the Name on the card!");
                 } else if (cardNo.trim() == "") {
@@ -87,12 +88,43 @@
                     alert("Please fill in the securityCode!");
                 } else if (year.trim() == "") {
                     alert("Please fill in the expire year of the card!");
-                }
-                else {
-                    document.makePaymentForm.action = "../../ECommerce_PaymentServlet?cardno=" + cardNo;
-                    document.makePaymentForm.submit();
+                } else if (!securityCode.match(numbers) || securityCode.length != 3){
+                    alert("Please provide valid security code!");
+                } else if (!year.match(numbers) || year.length != 4 || year < 2020){
+                    alert("Please provide valid expiry year!");
+                } else if (!cardNo.match(numbers)){
+                    alert("Card number cannot contain letters!");
+                } 
+                else if (cardNo.match(numbers)){
+                    console.log("here?");
+                    var creditcardInt = [];
+                    for (var i = 0; i < cardNo.length; i++) {
+                        creditcardInt[i] = parseInt(cardNo.substring(i, i + 1), 10);
+                    }
+                    for (var i = creditcardInt.length - 2; i >= 0; i = i - 2) {
+                        var j = creditcardInt[i];
+                        j = j * 2;
+                        if (j > 9) {
+                            j = j % 10 + 1;
+                        }
+                        creditcardInt[i] = j;
+                    }
+                    var sum = 0;
+                    for (var i = 0; i < creditcardInt.length; i++) {
+                        sum += creditcardInt[i];
+                    }
+                    if (sum % 10 != 0) {
+                        //the card number is valid
+                        alert("The card number is not valid!");
+                    }
+                    else{
+                        document.makePaymentForm.action = "../../ECommerce_PaymentServlet";
+                        document.makePaymentForm.submit();
+                    }
                 }
             }
+            
+            
         </script>
 
         <div class="body">

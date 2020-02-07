@@ -38,74 +38,65 @@ public class ECommerce_PaymentServlet extends HttpServlet {
 
         String failMsg;
 
-        //validate card number
-        String cardNumber = request.getParameter("cardno");
-        boolean isCardValid = verifyCard(cardNumber);
-        if (!isCardValid) {
-            failMsg = " Sorry, the checkout failed due to the invalid card number.";
-            response.sendRedirect("/IS3102_Project-war/B/SG/shoppingCart.jsp?errMsg=" + failMsg);
-        } else {
-            //get currency depending on country
-            Long countryID = (Long) s.getAttribute("countryID");
-            String currency = getCurrency(countryID);
+        //get currency depending on country
+        Long countryID = (Long) s.getAttribute("countryID");
+        String currency = getCurrency(countryID);
 
-            //insert 1 sales record
-            //get memberId
-            Long memberId = (Long) s.getAttribute("memberId");
-            System.out.println("member is " + memberId);
-            List<ShoppingCartLineItem> shoppingCart = (List<ShoppingCartLineItem>) request.getSession().getAttribute("myCart");
-            //get amount
-            double amountPaid = 0.0;
+        //insert 1 sales record
+        //get memberId
+        Long memberId = (Long) s.getAttribute("memberId");
+        System.out.println("member is " + memberId);
+        List<ShoppingCartLineItem> shoppingCart = (List<ShoppingCartLineItem>) request.getSession().getAttribute("myCart");
+        //get amount
+        double amountPaid = 0.0;
+        for (ShoppingCartLineItem item : shoppingCart) {
+            amountPaid += item.getPrice() * item.getQuantity();
+        }
+        Long soID = insertSalesOrder(memberId, currency, amountPaid);
+        System.out.println(soID);
+        if (soID != Long.valueOf(0)) {
+            boolean allSuccess = true;
             for (ShoppingCartLineItem item : shoppingCart) {
-                amountPaid += item.getPrice() * item.getQuantity();
+                int itemId = Integer.parseInt(item.getId());
+                System.out.println("item ID" + itemId);
+                int itemQty = item.getQuantity();
+                boolean result = createLineItem(itemId, itemQty);
+                if (!result) {
+                    allSuccess = false;
+                    break;
+                }
             }
-            Long soID = insertSalesOrder(memberId, currency, amountPaid);
-            System.out.println(soID);
-            if (soID != Long.valueOf(0)) {
-                boolean allSuccess = true;
-                for (ShoppingCartLineItem item : shoppingCart) {
-                    int itemId = Integer.parseInt(item.getId());
-                    System.out.println("item ID" + itemId);
-                    int itemQty = item.getQuantity();
-                    boolean result = createLineItem(itemId, itemQty);
-                    if (!result) {
-                        allSuccess = false;
-                        break;
-                    }
-                }
-
-                if (!allSuccess) {
-                    System.out.print("error here 1");
-                    failMsg = " There was an error in processing your order. Please try again.";
-                    response.sendRedirect("/IS3102_Project-war/B/SG/shoppingCart.jsp?errMsg=" + failMsg);
-                } else {
-                    //cleart the shopping cart
-                    shoppingCart.clear();
-                    //set myCart attribute to session
-                    s.setAttribute("myCart", shoppingCart);
-
-                    //The pick-up store
-                    String pickUpStore = getPickUpStore();
-                    String successResult = "You have checkout successfully! Pick up point: " + pickUpStore;
-                    response.sendRedirect("/IS3102_Project-war/B/SG/shoppingCart.jsp?goodMsg=" + successResult);
-                }
-
-            } else {
-                System.out.print("error here 2");
+            if (!allSuccess) {
+                System.out.print("error here 1");
                 failMsg = " There was an error in processing your order. Please try again.";
                 response.sendRedirect("/IS3102_Project-war/B/SG/shoppingCart.jsp?errMsg=" + failMsg);
+            } else {
+                //cleart the shopping cart
+                shoppingCart.clear();
+                //set myCart attribute to session
+                s.setAttribute("myCart", shoppingCart);
+
+                //The pick-up store
+                String pickUpStore = getPickUpStore();
+                String successResult = "You have checkout successfully! Pick up point: " + pickUpStore;
+                response.sendRedirect("/IS3102_Project-war/B/SG/shoppingCart.jsp?goodMsg=" + successResult);
             }
+
+        } else {
+            System.out.print("error here 2");
+            failMsg = " There was an error in processing your order. Please try again.";
+            response.sendRedirect("/IS3102_Project-war/B/SG/shoppingCart.jsp?errMsg=" + failMsg);
         }
 
     }
 
+    /*
     public boolean verifyCard(String cardNumber) {
         System.out.println(cardNumber.length());
         int[] creditcardInt = new int[cardNumber.length()];
         for (int i = 0; i < cardNumber.length(); i++) {
             creditcardInt[i] = Integer.parseInt(cardNumber.substring(i, i + 1));
         }
-
         for (int i = creditcardInt.length - 2; i >= 0; i = i - 2) {
             int j = creditcardInt[i];
             j = j * 2;
@@ -125,9 +116,8 @@ public class ECommerce_PaymentServlet extends HttpServlet {
             System.out.println(cardNumber + " is an invalid credit card number");
             return false;
         }
-
     }
-
+     */
     public String getCurrency(Long countryCode) {
         try {
             System.out.println("Country shopping in: " + countryCode);
@@ -221,8 +211,6 @@ public class ECommerce_PaymentServlet extends HttpServlet {
         }
     }
 
-    
-    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

@@ -12,6 +12,7 @@
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <included-library dirs="200">libs.javaee-api-7.0.classpath</included-library>
             <included-library dirs="200">file.reference.commons-math3-3.3.jar</included-library>
+            <included-library dirs="200">file.reference.braintree-java-2.87.0.jar</included-library>
             <source-roots>
                 <root id="src.dir"/>
             </source-roots>
