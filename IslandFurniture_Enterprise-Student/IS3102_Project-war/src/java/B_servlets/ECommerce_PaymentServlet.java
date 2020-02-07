@@ -60,7 +60,7 @@ public class ECommerce_PaymentServlet extends HttpServlet {
                 int itemId = Integer.parseInt(item.getId());
                 System.out.println("item ID" + itemId);
                 int itemQty = item.getQuantity();
-                boolean result = createLineItem(itemId, itemQty);
+                boolean result = createLineItem(itemId, itemQty, soID);
                 if (!result) {
                     allSuccess = false;
                     break;
@@ -170,13 +170,14 @@ public class ECommerce_PaymentServlet extends HttpServlet {
         }
     }
 
-    public boolean createLineItem(int itemId, int itemQty) {
+    public boolean createLineItem(int itemId, int itemQty, Long salesOrderId) {
         Client newClient = ClientBuilder.newClient();
         WebTarget targetNew = newClient
                 .target("http://localhost:8080/IS3102_WebService-Student/webresources/commerce")
                 .path("createEcommerceLineItemRecord")
                 .queryParam("itemEntityID", itemId)
-                .queryParam("quantity", itemQty);
+                .queryParam("quantity", itemQty)
+                .queryParam("salesRecordID", salesOrderId);
         Invocation.Builder invocationBuilderNew = targetNew.request(MediaType.APPLICATION_JSON);
         Response myResponseNew = invocationBuilderNew.post(Entity.entity("", "application/json"));
         if (myResponseNew.getStatus() != 201) {
