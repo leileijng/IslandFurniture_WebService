@@ -40,7 +40,7 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
             String imageURL = request.getParameter("imageURL");
             Long countryID = (Long) s.getAttribute("countryID");
 
-            Long storeID = Long.parseLong("59");
+            Long storeID = Long.parseLong("10001");
             int itemQty = getQuantity(storeID, SKU);
 
             if (itemQty > 0) {

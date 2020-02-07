@@ -41,9 +41,10 @@ public class ECommerce_AddFurnitureToListServlet extends HttpServlet {
             String imageURL = request.getParameter("imageURL");
             Long countryID = (Long) s.getAttribute("countryID");
 
-            Long storeID = Long.parseLong("59");
+            Long storeID = Long.parseLong("10001");
             int itemQty = getQuantity(storeID, SKU);
 
+            //for item available in the stock
             if (itemQty > 0) {
                 // Get Cart from Session.
                 List<ShoppingCartLineItem> cart = (List<ShoppingCartLineItem>) request.getSession().getAttribute("myCart");
@@ -54,8 +55,10 @@ public class ECommerce_AddFurnitureToListServlet extends HttpServlet {
                 }
                 boolean isInCart = false;
                 for (ShoppingCartLineItem item : cart) {
+                    //for item already in the cart
                     if (item.getSKU().equals(SKU)) {
                         isInCart = true;
+                        //check whether has more stock for this item
                         if (itemQty - item.getQuantity() == 0) {
                             String result = "Item not added to cart, not enough quantity available.";
                             response.sendRedirect("/IS3102_Project-war/B/SG/shoppingCart.jsp?errMsg=" + result);
@@ -66,6 +69,8 @@ public class ECommerce_AddFurnitureToListServlet extends HttpServlet {
                         }
                     }
                 }
+                
+                //if the item is newly added into the shopping cart
                 if (isInCart == false) {
                     ShoppingCartLineItem cartItem = new ShoppingCartLineItem();
                     cartItem.setId(id);
@@ -80,6 +85,8 @@ public class ECommerce_AddFurnitureToListServlet extends HttpServlet {
                 String result = "Item successfully added into the cart!";
                 response.sendRedirect("/IS3102_Project-war/B/SG/shoppingCart.jsp?goodMsg=" + result);
             }
+            
+            //not enough stock
             else{
                 String result = "Item not added to cart, not enough quantity available.";
                 response.sendRedirect("/IS3102_Project-war/B/SG/shoppingCart.jsp?errMsg=" + result);

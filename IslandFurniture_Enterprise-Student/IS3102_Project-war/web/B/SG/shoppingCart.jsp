@@ -72,9 +72,11 @@
                 $("#makePaymentForm").show("slow", function () {
                 });
             }
+            
             function makePayment() {
                 window.event.returnValue = true;
-                document.makePaymentForm.action = "../../ECommerce_PaymentServlet";
+                card = $('#txtCardNo').val();
+                document.makePaymentForm.action = "../../ECommerce_PaymentServlet?cardno=" + card;
                 document.makePaymentForm.submit();
             }
         </script>
@@ -221,7 +223,7 @@
                                                                 <label>Card Number: </label>
                                                             </td>
                                                             <td style="padding: 5px">
-                                                                <input type="text" class="input-text text " title="cardno" id="txtCardNo" required>
+                                                                <input type="text" class="input-text text " title="cardno" name="card" id="txtCardNo" required>
                                                             </td>
                                                         </tr>
                                                         <tr>
