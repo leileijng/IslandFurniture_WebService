@@ -141,6 +141,19 @@ public class ECommerceFacadeREST {
                 return Response.status(404).build();
             }
 
+            //insert record to salesrecordentity_lineitementity table, link salesOrder and line item together 
+            String insertSL = "insert into salesrecordentity_lineitementity values(?,?);";
+            ps = conn.prepareStatement(insertSL);
+            ps.setInt(1, salesId.intValue());
+            ps.setInt(2, newlineItemId);
+            int rsinsertSL = ps.executeUpdate();
+            if (rsinsertSL > 0) {
+                System.out.println("Insert into salesrecordentity_lineitementity successfully");
+            } else {
+                conn.close();
+                return Response.status(404).build();
+            }
+
             //update lineitem quantity (deduct the quantity)
             //first get the id of lineitem, that need to be updated
             List<Integer> lineItemsTobeUpdateIDs = new ArrayList<Integer>();
@@ -174,18 +187,6 @@ public class ECommerceFacadeREST {
                 int rsupdateLineItem = ps.executeUpdate();
                 if (rsupdateLineItem > 0) {
 
-                    //insert record to salesrecordentity_lineitementity table, link salesOrder and line item together 
-                    String insertSL = "insert into salesrecordentity_lineitementity values(?,?);";
-                    ps = conn.prepareStatement(insertSL);
-                    ps.setInt(1, salesId.intValue());
-                    ps.setInt(2, lineItemsTobeUpdateIDs.get(0));
-                    int rsinsertSL = ps.executeUpdate();
-                    if (rsinsertSL > 0) {
-                        System.out.println("Insert into salesrecordentity_lineitementity successfully");
-                    } else {
-                        conn.close();
-                        return Response.status(404).build();
-                    }
                     System.out.println("Update lineItem quantity successfully");
                 } else {
                     conn.close();
@@ -198,19 +199,6 @@ public class ECommerceFacadeREST {
                     ps.setInt(1, lineItemsTobeUpdateIDs.get(i));
                     int rsupdateLineItem1 = ps.executeUpdate();
                     if (rsupdateLineItem1 > 0) {
-
-                        //insert record to salesrecordentity_lineitementity table, link salesOrder and line item together 
-                        String insertSL = "insert into salesrecordentity_lineitementity values(?,?);";
-                        ps = conn.prepareStatement(insertSL);
-                        ps.setInt(1, salesId.intValue());
-                        ps.setInt(2, lineItemsTobeUpdateIDs.get(0));
-                        int rsinsertSL = ps.executeUpdate();
-                        if (rsinsertSL > 0) {
-                            System.out.println("Insert into salesrecordentity_lineitementity successfully");
-                        } else {
-                            conn.close();
-                            return Response.status(404).build();
-                        }
                         System.out.println("Update lineItem quantity successfully 1");
                     } else {
                         conn.close();
@@ -224,20 +212,6 @@ public class ECommerceFacadeREST {
                 ps.setInt(2, lineItemsTobeUpdateIDs.get(lineItemsTobeUpdateIDs.size() - 1));
                 int rsupdateLineItem1 = ps.executeUpdate();
                 if (rsupdateLineItem1 > 0) {
-
-                    //insert record to salesrecordentity_lineitementity table, link salesOrder and line item together 
-                    String insertSL = "insert into salesrecordentity_lineitementity values(?,?);";
-                    ps = conn.prepareStatement(insertSL);
-                    ps.setInt(1, salesId.intValue());
-                    ps.setInt(2, lineItemsTobeUpdateIDs.get(0));
-                    int rsinsertSL = ps.executeUpdate();
-                    if (rsinsertSL > 0) {
-                        System.out.println("Insert into salesrecordentity_lineitementity successfully");
-                    } else {
-                        conn.close();
-                        return Response.status(404).build();
-                    }
-
                     System.out.println("Update lineItem quantity successfully 2");
                 } else {
                     conn.close();
@@ -248,8 +222,22 @@ public class ECommerceFacadeREST {
                 return Response.status(404).build();
             }
 
+            
+            //update storagebinenity table, (add free volume for warehouse)
+            String upadtestoragebinentityAdd = "Update storagebinentity set storagebinentity.freeVolume = freeVolume + ? where id = 20;";
+            ps = conn.prepareStatement(upadtestoragebinentityAdd);
+            ps.setInt(1, quantity);
+            int rsAddFreeVolume = ps.executeUpdate();
+
+            if (rsAddFreeVolume > 0) {
+                System.out.println("Update storagebinentity addd volume successfully");
+            } else {
+                conn.close();
+                return Response.status(404).build();
+            }
+            
             //update storagebinentity table, (deduct free volume)
-            String upadtestoragebinentity = "Update storagebinentity set storagebinentity.freeVolume = freeVolume - ? where id = 21;";
+            String upadtestoragebinentity = "Update storagebinentity set storagebinentity.freeVolume = freeVolume - ? where id = 9;";
             ps = conn.prepareStatement(upadtestoragebinentity);
             ps.setInt(1, quantity);
             int rs3 = ps.executeUpdate();
