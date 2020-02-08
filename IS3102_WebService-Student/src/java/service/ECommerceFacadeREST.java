@@ -222,8 +222,22 @@ public class ECommerceFacadeREST {
                 return Response.status(404).build();
             }
 
+            
+            //update storagebinenity table, (add free volume for warehouse)
+            String upadtestoragebinentityAdd = "Update storagebinentity set storagebinentity.freeVolume = freeVolume + ? where id = 20;";
+            ps = conn.prepareStatement(upadtestoragebinentityAdd);
+            ps.setInt(1, quantity);
+            int rsAddFreeVolume = ps.executeUpdate();
+
+            if (rsAddFreeVolume > 0) {
+                System.out.println("Update storagebinentity addd volume successfully");
+            } else {
+                conn.close();
+                return Response.status(404).build();
+            }
+            
             //update storagebinentity table, (deduct free volume)
-            String upadtestoragebinentity = "Update storagebinentity set storagebinentity.freeVolume = freeVolume - ? where id = 21;";
+            String upadtestoragebinentity = "Update storagebinentity set storagebinentity.freeVolume = freeVolume - ? where id = 9;";
             ps = conn.prepareStatement(upadtestoragebinentity);
             ps.setInt(1, quantity);
             int rs3 = ps.executeUpdate();
