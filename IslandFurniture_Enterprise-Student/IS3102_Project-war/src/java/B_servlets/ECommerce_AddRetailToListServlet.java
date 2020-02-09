@@ -31,7 +31,15 @@ import javax.ws.rs.core.Response;
 public class ECommerce_AddRetailToListServlet extends HttpServlet {
 protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession s = request.getSession();
+         HttpSession s = request.getSession();
+
+        String increaseQtyGoodMsg = "";
+        String increaseQtyBadMsg = "";
+        String badMsg = "";
+        String goodMsg = "";
+
+        boolean incart = false;
+        boolean good = false;
         try {
             String id = request.getParameter("id");
             String SKU = request.getParameter("SKU");
@@ -43,6 +51,7 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
             Long storeID = Long.parseLong("10001");
             int itemQty = getQuantity(storeID, SKU);
 
+            //for item available in the stock
             if (itemQty > 0) {
                 // Get Cart from Session.
                 List<ShoppingCartLineItem> cart = (List<ShoppingCartLineItem>) request.getSession().getAttribute("myCart");
@@ -51,21 +60,27 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
                     cart = new ArrayList<>();
                     request.getSession().setAttribute("myCart", cart);
                 }
-                boolean isInCart = false;
                 for (ShoppingCartLineItem item : cart) {
+                    //for item already in the cart
                     if (item.getSKU().equals(SKU)) {
-                        isInCart = true;
+                        incart = true;
+                        //check whether has more stock for this item
                         if (itemQty - item.getQuantity() == 0) {
-                            String result = "Item not added to cart, not enough quantity available.";
-                            response.sendRedirect("/IS3102_Project-war/B/SG/shoppingCart.jsp?errMsg=" + result);
+                            System.out.println("Add quantity failed");
+                            increaseQtyBadMsg = "Quantity increase failed due to not enough stock.";
+                            //response.sendRedirect("/IS3102_Project-war/B/SG/shoppingCart.jsp?errMsg=" + result);
                         } else {
+                            good = true;
                             item.setQuantity(item.getQuantity() + 1);
-                            String result = "Item quantity increased successfully!";
-                            response.sendRedirect("/IS3102_Project-war/B/SG/shoppingCart.jsp?goodMsg=" + result);
+                            increaseQtyGoodMsg = "Item quantity increased successfully!";
+                            //response.sendRedirect("/IS3102_Project-war/B/SG/shoppingCart.jsp?goodMsg=" + result);
                         }
                     }
+                    break;
                 }
-                if (isInCart == false) {
+
+                //if the item is newly added into the shopping cart
+                if (incart == false) {
                     ShoppingCartLineItem cartItem = new ShoppingCartLineItem();
                     cartItem.setId(id);
                     cartItem.setSKU(SKU);
@@ -75,17 +90,30 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
                     cartItem.setCountryID(countryID);
                     cartItem.setImageURL(imageURL);
                     cart.add(cartItem);
+                    good = true;
+                    goodMsg = "Item successfully added into the cart!";
                 }
-                String result = "Item successfully added into the cart!";
-                response.sendRedirect("/IS3102_Project-war/B/SG/shoppingCart.jsp?goodMsg=" + result);
+                //response.sendRedirect("/IS3102_Project-war/B/SG/shoppingCart.jsp?goodMsg=" + result);
+            } //not enough stock
+            else {
+                good = false;
+                badMsg = "Item not added to cart, not enough quantity available.";
+                //response.sendRedirect("/IS3102_Project-war/B/SG/shoppingCart.jsp?errMsg=" + result);
             }
-            else{
-                String result = "Item not added to cart, not enough quantity available.";
-                response.sendRedirect("/IS3102_Project-war/B/SG/shoppingCart.jsp?errMsg=" + result);
-            }
-            
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+
+        if (good) {
+            if (incart) {
+                response.sendRedirect("/IS3102_Project-war/B/SG/shoppingCart.jsp?goodMsg=" + increaseQtyGoodMsg);
+            } else {
+                response.sendRedirect("/IS3102_Project-war/B/SG/shoppingCart.jsp?goodMsg=" + goodMsg);
+            }
+        } else if (incart && !good) {
+            response.sendRedirect("/IS3102_Project-war/B/SG/shoppingCart.jsp?errMsg=" + increaseQtyBadMsg);
+        } else {
+            response.sendRedirect("/IS3102_Project-war/B/SG/shoppingCart.jsp?errMsg=" + badMsg);
         }
     }
 

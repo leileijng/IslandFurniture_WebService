@@ -57,6 +57,9 @@ public class ECommerceFacadeREST {
     public Response createEcommerceTransactionRecord(@QueryParam("memberID") Long memberID, @QueryParam("amountPaid") double amountPaid,
             @QueryParam("currency") String currency) {
 
+        System.out.println("memberId: " + memberID);
+        System.out.println("amount: " + amountPaid);
+        System.out.println("currency:" + currency);
         System.out.println("createEcommerceTransactionRecord called");
         //Prepare data to insert
         //For create date
