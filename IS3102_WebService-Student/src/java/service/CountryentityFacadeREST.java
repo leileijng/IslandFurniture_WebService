@@ -1,5 +1,6 @@
 package service;
 
+import DB.CountryDB;
 import Entity.Countryentity;
 import java.sql.*;
 import java.util.ArrayList;
@@ -91,14 +92,10 @@ public class CountryentityFacadeREST extends AbstractFacade<Countryentity> {
     @Path("getCountry")
     @Produces({"application/json"})
     public Response listAllCountries(@QueryParam("countrycode") Long countryCode) {
+        CountryDB db = new CountryDB();
         try {
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/islandfurniture-it07?user=root&password=12345");
-            String stmt = "SELECT * FROM countryentity c WHERE c.ID=?";
-            PreparedStatement ps = conn.prepareStatement(stmt);
-            ps.setLong(1, countryCode);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                String currency = rs.getString("CURRENCY");
+            String currency = db.getCurrency(countryCode);
+            if (currency != null) {
                 System.out.println("currecy is: " + currency);
                 return Response.status(Response.Status.OK).entity(currency).build();
             } else {
