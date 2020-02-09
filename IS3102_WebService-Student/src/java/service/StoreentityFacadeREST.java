@@ -1,5 +1,6 @@
 package service;
 
+import DB.StoreentityDB;
 import Entity.Storeentity;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -106,9 +107,30 @@ public class StoreentityFacadeREST extends AbstractFacade<Storeentity> {
         }
     }
     
+        
+    @GET
+    @Path("getStoreInfo")
+    @Produces({"application/json"})
+    public Response getStoreInfo(@QueryParam("storeID") Long storeID) {
+            StoreentityDB db = new StoreentityDB();
+        try {
+            String info = db.getStoreInfo(storeID);
+            if(info != null){
+                return Response
+                        .status(200)
+                        .entity(info)
+                        .build();
+            }else{
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+    }
     
     
-    
+    /*
     @GET
     @Path("getStoreInfo")
     @Produces({"application/json"})
@@ -140,7 +162,11 @@ public class StoreentityFacadeREST extends AbstractFacade<Storeentity> {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
+*/
+    
 
+    
+    
     @Override
     protected EntityManager getEntityManager() {
         return em;

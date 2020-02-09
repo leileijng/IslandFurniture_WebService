@@ -180,7 +180,8 @@ public class ECommerce_PaymentServlet extends HttpServlet {
                 .queryParam("salesRecordID", salesOrderId);
         Invocation.Builder invocationBuilderNew = targetNew.request(MediaType.APPLICATION_JSON);
         Response myResponseNew = invocationBuilderNew.post(Entity.entity("", "application/json"));
-        if (myResponseNew.getStatus() != 201) {
+        System.out.println("status:" + myResponseNew.getStatus());
+        if (myResponseNew.getStatus() != 200) {
             return false;
         } else {
             return true;
