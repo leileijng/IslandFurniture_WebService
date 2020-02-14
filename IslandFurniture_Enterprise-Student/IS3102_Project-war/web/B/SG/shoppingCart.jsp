@@ -72,7 +72,7 @@
                 $("#makePaymentForm").show("slow", function () {
                 });
             }
-            
+
             function makePayment() {
                 window.event.returnValue = true;
                 cardName = $('#txtName').val();
@@ -88,14 +88,13 @@
                     alert("Please fill in the securityCode!");
                 } else if (year.trim() == "") {
                     alert("Please fill in the expire year of the card!");
-                } else if (!securityCode.match(numbers) || securityCode.length != 3){
+                } else if (!securityCode.match(numbers) || securityCode.length != 3) {
                     alert("Please provide valid security code!");
-                } else if (!year.match(numbers) || year.length != 4 || year < 2020){
+                } else if (!year.match(numbers) || year.length != 4 || year < 2020) {
                     alert("Please provide valid expiry year!");
-                } else if (!cardNo.match(numbers)){
+                } else if (!cardNo.match(numbers)) {
                     alert("Card number cannot contain letters!");
-                } 
-                else if (cardNo.match(numbers)){
+                } else if (cardNo.match(numbers)) {
                     console.log("here?");
                     var creditcardInt = [];
                     for (var i = 0; i < cardNo.length; i++) {
@@ -116,15 +115,14 @@
                     if (sum % 10 != 0) {
                         //the card number is valid
                         alert("The card number is not valid!");
-                    }
-                    else{
+                    } else {
                         document.makePaymentForm.action = "../../ECommerce_PaymentServlet";
                         document.makePaymentForm.submit();
                     }
                 }
             }
-            
-            
+
+
         </script>
 
         <div class="body">
@@ -302,6 +300,38 @@
                                                                 <input type="text" style="width: 60px" class="input-text text" title="year" id="year" required>(eg: 2015)                                                        
                                                             </td>
                                                         </tr>
+
+                                                        <tr>
+                                                            <td style="">
+                                                                <script
+                                                                    accesskey="" src="https://www.paypal.com/sdk/js?client-id=AV-IlTpVN8jb6JYvTwZKW0LApjBRWFVxym62vgbofHiM-s8tDYG8y3w5Hbs_faazImifcXGyS1MewQgk"> // Required. Replace SB_CLIENT_ID with your sandbox client ID.
+                                                                </script>
+
+                                                                <div id="paypal-button-container"></div>
+
+                                                                <script>
+                                                                    paypal.Buttons({
+                                                                        createOrder: function (data, actions) {
+                                                                            // This function sets up the details of the transaction, including the amount and line item details.
+                                                                            return actions.order.create({
+                                                                                purchase_units: [{
+                                                                                        amount: {
+                                                                                            value: <%=finalPrice%>
+                                                                                        }
+                                                                                    }]
+                                                                            });
+                                                                        },
+                                                                        onApprove: function (data, actions) {
+
+                                                                            document.makePaymentForm.action = "../../ECommerce_PaymentServlet";
+                                                                            document.makePaymentForm.submit();
+                                                                            return actions.order.capture().then(function (details) {
+                                                                                alert('Transaction completed by ' + details.payer.name.given_name);
+                                                                            });
+                                                                        }
+                                                                    }).render('#paypal-button-container');
+                                                                </script>
+                                                            </td>
                                                         <tr>
                                                             <td style="">
                                                             </td>
@@ -309,6 +339,9 @@
                                                                 <div align="right"><a href="#makePaymentModal" data-toggle="modal"><button class="btn btn-primary">Make Payment</button></a></div>
                                                             </td>
                                                         </tr>
+
+
+
                                                         </tbody></table>
                                                 </div>
                                             </form>
